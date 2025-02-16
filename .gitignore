@@ -1,3 +1,7 @@
+public/
+themes/blowfish/
+.hugo_build.lock
+resources/
 # Logs
 logs
 *.log
