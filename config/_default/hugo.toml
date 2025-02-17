@@ -35,8 +35,26 @@ enableEmoji = true
   filename = 'sitemap.xml'
   priority = 0.5
 
+[mediaTypes]
+  [mediaTypes.'text/summary']
+    suffixes = ['smy']
+
+[outputFormats]
+  [outputFormats.pins]
+     baseName = 'pins'
+     isPlainText = true
+     root = true
+     mediaType = 'application/json'
+
+  [outputFormats.summary]
+     baseName = 'summary'
+     isPlainText = true
+     root = true
+     mediaType = 'text/html'
+
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+  page = ["HTML", "summary"]
 
 [related]
   threshold = 0
