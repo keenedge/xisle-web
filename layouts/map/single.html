@@ -1,117 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ with .Site.Params.isoCode | default (.Site.LanguageCode | default " en") }} {{- . -}} {{ end }}" dir="{{ if .Site.Params.rtl | default false -}}
+    rtl
+  {{- else -}}
+    ltr
+  {{- end }}" class="scroll-smooth" data-default-appearance="{{ .Site.Params.defaultAppearance | default " light" }}"
+    data-auto-appearance="{{ .Site.Params.autoSwitchAppearance | default " true" }}">
+{{- partial "head.html" . -}}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.126/Build/Cesium/Cesium.js"></script>
-    <link href="https://cesium.com/downloads/cesiumjs/releases/1.126/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<body
+    class="flex flex-col px-3 h-screen m-auto text-lg leading-7 bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral scrollbar-thin scrollbar-track-neutral-200 scrollbar-thumb-neutral-400 dark:scrollbar-track-neutral-800 dark:scrollbar-thumb-neutral-600">
+    <div id="the-top" class="absolute flex self-center">
+        <a class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600"
+            href="#main-content"><span
+                class="font-bold text-primary-600 ltr:pr-2 rtl:pl-2 dark:text-primary-400">&darr;</span>{{ i18n
+            "nav.skip_to_main" }}</a>
+    </div>
+    {{ $header := print "partials/header/" .Site.Params.header.layout ".html" }}
+    {{ if templates.Exists $header }}
+    {{ partial $header . }}
+    {{ else }}
+    {{ partial "partials/header/basic.html" . }}
+    {{ end }}
+    <div class="relative flex flex-col grow">
+        <div id="cesiumContainer" class="grow"></div>
+        <div id="htmlSummaryContainer" class="">
+            This is a floating control panel<br />
+            with a translucent background color.
+            <p>
+                <label>
+                    <input id="skyCheckbox" type="checkbox" checked />
+                    <span>Enable atmospheric effect</span>
+                </label><br />
+                <button class="cesium-button">Button 1</button>
+                <button class="cesium-button">Button 2</button>
+            </p>
+        </div>
 
-</head>
-
-<body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-        // Your access token can be found at: https://ion.cesium.com/tokens.
-        // This is the default access token from your ion account
-
-        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2ZjVhODYyOS04NjBlLTQ5MDUtOWI4MC1hMGRiNWUwYTU0NGQiLCJpZCI6NTY2NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0Mzg5MzE5Nn0.5VoO3hPjqXGjUQg0mF8Mt0JyeVwUKqytjrCtLvxGNw0';
-        var terrain = Cesium.Terrain.fromWorldTerrain();
-
-        // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
-        const viewer = new Cesium.Viewer('cesiumContainer', {
-            terrain: terrain,
-            animation: false,
-            timeline: false
-        });
-        //viewer.extend(Cesium.viewerCesiumInspectorMixin);
-
-        var views = [
-            {
-                latitude: 48.830054,
-                longitude: -123.758148,
-                height: 1000,
-                heading: 300,
-                pitch: -45,
-                roll: 0
-            },
-            {
-                latitude: 48.830054,
-                longitude: -123.758148,
-                height: 1000,
-                heading: 300,
-                pitch: -30.5,
-                roll: 0
-            },
-            {
-                latitude: 48.830054,
-                longitude: -123.758148,
-                height: 1000,
-                heading: 300,
-                pitch: -15,
-                roll: 0
-            }
-        ]
-        var view = views[0];
-
-
-        var position = new Cesium.Cartesian3.fromDegrees(view.longitude, view.latitude, view.height);
-        var orientation = { heading: Cesium.Math.toRadians(view.heading), pitch: Cesium.Math.toRadians(view.pitch), roll: Cesium.Math.toRadians(view.roll) };
-
-        viewer.dataSources.add(Cesium.GeoJsonDataSource.load('/pins/pins.json', {
-            stroke: Cesium.Color.HOTPINK,
-            fill: Cesium.Color.PINK,
-            strokeWidth: 3,
-            markerSymbol: '?'
-        }));
-
-        viewer.camera.setView({
-            destination: position,
-            orientation: orientation
-        });
-
-
-        var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-        handler.setInputAction(function (event) {
-            var ray = viewer.camera.getPickRay(event.position);
-            var mousePosition = viewer.scene.globe.pick(ray, viewer.scene);
-            if (Cesium.defined(mousePosition)) {
-                var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
-                var mouseLat = Cesium.Math.toDegrees(cartographic.latitude);
-                var mouseLon = Cesium.Math.toDegrees(cartographic.longitude);
-                var mouseHeight = cartographic.height;
-
-                var camera = viewer.scene.camera;
-                var position = camera.positionCartographic;
-                var orientation = { heading: 0, roll: 0, pitch: 0 };
-                orientation.heading = camera.heading;
-                orientation.pitch = camera.pitch;
-                orientation.roll = camera.roll;
-                var view = {
-                    latitude: Cesium.Math.toDegrees(position.latitude),
-                    longitude: Cesium.Math.toDegrees(position.longitude),
-                    height: position.height,
-                    heading: Cesium.Math.toDegrees(orientation.heading),
-                    pitch: Cesium.Math.toDegrees(orientation.pitch),
-                    roll: Cesium.Math.toDegrees(orientation.roll),
-                }
-                var json = {
-                    "title": "new pin",
-                    "pin": {
-                        "latitude": mouseLat,
-                        "longitude": mouseLon,
-                        "height": mouseHeight
-                    },
-                    "view": view
-                }
-                navigator.clipboard.writeText(JSON.stringify(json));
-
-                console.log(JSON.stringify(json));
-
-            }
-        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-    </script>
+        {{ if .Site.Params.enableSearch | default false }}
+        {{- partial "search.html" . -}}
+        {{ end }}
+    </div>
 </body>
+{{ if .Site.Params.buymeacoffee.globalWidget | default false }}
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+    data-id="{{ .Site.Params.buymeacoffee.identifier }}" data-description="Support me on Buy me a coffee!"
+    data-message="{{ .Site.Params.buymeacoffee.globalWidgetMessage | default "" }}"
+    data-color="{{ .Site.Params.buymeacoffee.globalWidgetColor | default " #FFDD00" }}"
+    data-position="{{ .Site.Params.buymeacoffee.globalWidgetPosition | default " Left" }}" data-x_margin="18"
+    data-y_margin="18"></script>
+{{ end }}
+<script type="module">
+    // Your access token can be found at: https://ion.cesium.com/tokens.
+    // This is the default access token from your ion account
+
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2ZjVhODYyOS04NjBlLTQ5MDUtOWI4MC1hMGRiNWUwYTU0NGQiLCJpZCI6NTY2NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0Mzg5MzE5Nn0.5VoO3hPjqXGjUQg0mF8Mt0JyeVwUKqytjrCtLvxGNw0';
+    var terrain = Cesium.Terrain.fromWorldTerrain();
+
+    // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrain: terrain,
+        animation: false,
+        timeline: false
+    });
+    //viewer.extend(Cesium.viewerCesiumInspectorMixin);
+
+    var views = [
+        {
+            latitude: 48.830054,
+            longitude: -123.758148,
+            height: 1000,
+            heading: 300,
+            pitch: -45,
+            roll: 0
+        },
+        {
+            latitude: 48.830054,
+            longitude: -123.758148,
+            height: 1000,
+            heading: 300,
+            pitch: -30.5,
+            roll: 0
+        },
+        {
+            latitude: 48.830054,
+            longitude: -123.758148,
+            height: 1000,
+            heading: 300,
+            pitch: -15,
+            roll: 0
+        }
+    ]
+    var view = views[0];
+
+
+    var position = new Cesium.Cartesian3.fromDegrees(view.longitude, view.latitude, view.height);
+    var orientation = { heading: Cesium.Math.toRadians(view.heading), pitch: Cesium.Math.toRadians(view.pitch), roll: Cesium.Math.toRadians(view.roll) };
+
+    // viewer.dataSources.add(Cesium.GeoJsonDataSource.load('/pins/pins.json', {
+    //     stroke: Cesium.Color.HOTPINK,
+    //     fill: Cesium.Color.PINK,
+    //     strokeWidth: 3,
+    //     markerSymbol: '?'
+    // }));
+
+    viewer.camera.setView({
+        destination: position,
+        orientation: orientation
+    });
+
+
+    var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handler.setInputAction(function (event) {
+        var ray = viewer.camera.getPickRay(event.position);
+        var mousePosition = viewer.scene.globe.pick(ray, viewer.scene);
+        if (Cesium.defined(mousePosition)) {
+            var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
+            var mouseLat = Cesium.Math.toDegrees(cartographic.latitude);
+            var mouseLon = Cesium.Math.toDegrees(cartographic.longitude);
+            var mouseHeight = cartographic.height;
+
+            var camera = viewer.scene.camera;
+            var position = camera.positionCartographic;
+            var orientation = { heading: 0, roll: 0, pitch: 0 };
+            orientation.heading = camera.heading;
+            orientation.pitch = camera.pitch;
+            orientation.roll = camera.roll;
+            var view = {
+                latitude: Cesium.Math.toDegrees(position.latitude),
+                longitude: Cesium.Math.toDegrees(position.longitude),
+                height: position.height,
+                heading: Cesium.Math.toDegrees(orientation.heading),
+                pitch: Cesium.Math.toDegrees(orientation.pitch),
+                roll: Cesium.Math.toDegrees(orientation.roll),
+            }
+            var json = {
+                "title": "new pin",
+                "pin": {
+                    "latitude": mouseLat,
+                    "longitude": mouseLon,
+                    "height": mouseHeight
+                },
+                "view": view
+            }
+            navigator.clipboard.writeText(JSON.stringify(json));
+
+            console.log(JSON.stringify(json));
+
+            // fetch('/pins/prevost-east-launch/summary.html')
+            //     .then(function (response) {
+            //         return response.text;
+            //     })
+            //     .then(function (myJson) {
+            //         const element = document.getElementById("htmlSummaryContainer");
+            //         debugger;
+            //         element.innerHTML = myJson;
+            //         console.log(myJson);
+            //     });
+
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("htmlSummaryContainer").innerHTML = this.responseText;
+                }
+            };
+
+            xhttp.open("GET", "/pins/prevost-east-launch/summary.html", true);
+            xhttp.send();
+
+        }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+</script>
 
 </html>
