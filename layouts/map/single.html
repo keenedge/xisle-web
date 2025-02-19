@@ -172,27 +172,28 @@
                 },
                 "view": view
             }
-            navigator.clipboard.writeText(JSON.stringify(json));
+            let yaml = jsyaml.dump( json );
+//            navigator.clipboard.writeText(JSON.stringify(json));
+            navigator.clipboard.writeText( yaml );
 
             console.log(JSON.stringify(json));
-
-            // fetch('/pins/prevost-east-launch/summary.html')
-            //     .then(function (response) {
-            //         return response.text;
-            //     })
-            //     .then(function (myJson) {
-            //         const element = document.getElementById("htmlSummaryContainer");
-            //         debugger;
-            //         element.innerHTML = myJson;
-            //         console.log(myJson);
-            //     });
-
-
-            
-
         }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+
+    title: new pin
+    pin:
+      latitude: 48.83104110783629
+      longitude: -123.76646333265627
+      height: 690.2674741671
+    view:
+      latitude: 48.830054000000004
+      longitude: -123.75814800000002
+      height: 1000.0000000000839
+      heading: 300
+      pitch: -45
+      roll: 359.99999999999994
+    
 
 </script>
 
