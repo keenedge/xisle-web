@@ -1,16 +1,19 @@
 ---
-title: new pin
+title: East Launch
 pin:
-    latitude: 48.83104110783629
-    longitude: -123.76646333265627
-    height: 690.2674741671
+  latitude: 48.83139222073931
+  longitude: -123.76712856777604
+  height: 744.7459494612348
 view:
-    latitude: 48.830054000000004
-    longitude: -123.75814800000002
-    height: 1000.0000000000839
-    heading: 300
-    pitch: -45
-    roll: 359.99999999999994
+  latitude: 48.828619327572994
+  longitude: -123.76420759171823
+  height: 1022.0986146769671
+  heading: 327.1276307308018
+  pitch: -48.68493837669631
+  roll: 359.99728284044676
+
+---
+
 ---
 Another Launch
 <!--more-->

@@ -1,5 +1,33 @@
 {
+  "scripts": {
+    "postinstall": "vendor-copy",
+    "assets": "rimraf assets/vendor && vendor-copy",
+    "dev": "NODE_ENV=development ./node_modules/tailwindcss/lib/cli.js -i ./assets/css/main.css -o ./assets/css/compiled/main.css --jit -w",
+    "build": "NODE_ENV=production ./node_modules/tailwindcss/lib/cli.js -i ./assets/css/main.css -o ./assets/css/compiled/main.css --jit",
+    "dev-windows": "set NODE_ENV=development&&node ./node_modules/tailwindcss/lib/cli.js -i ./assets/css/main.css -o ./assets/css/compiled/main.css --jit -w",
+    "build-windows": "set NODE_ENV=production&&node ./node_modules/tailwindcss/lib/cli.js -i ./assets/css/main.css -o ./assets/css/compiled/main.css --jit",
+    "build-hugo": "hugo --minify -s exampleSite --themesDir ../.. -d ../docs --baseURL https://nunocoracao.github.io/blowfish/",
+    "example": "hugo server -E -F --minify --source exampleSite --themesDir ../.. --buildDrafts -b http://localhost/ -p 1313",
+    "lighthouse": "lhci autorun"
+  },
   "devDependencies": {
     "yamljs": "^0.3.0"
-  }
+  },
+  "dependencies": {
+    "cesium": "^1.126.0",
+    "rimraf": "^6.0.1",
+    "vendor-copy": "^3.0.1"
+  },
+  "vendorCopy": [],
+  "devVendorCopy": [
+    {
+      "from": "node_modules/yamljs/dist/yaml.min.js",
+      "to": "assets/lib/yaml.min.js"
+    },
+    {
+      "from": "node_modules/cesium/build/Cesium/",
+      "to": "/static/lib/Cesium"
+    }
+
+  ]
 }

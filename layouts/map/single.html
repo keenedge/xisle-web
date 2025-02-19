@@ -49,7 +49,7 @@
     data-position="{{ .Site.Params.buymeacoffee.globalWidgetPosition | default " Left" }}" data-x_margin="18"
     data-y_margin="18"></script>
 {{ end }}
-<script type="module">
+<script >
     // Your access token can be found at: https://ion.cesium.com/tokens.
     // This is the default access token from your ion account
 
@@ -61,7 +61,10 @@
         terrain: terrain,
         animation: false,
         timeline: false,
-        infoBox: false
+        infoBox: false,
+        baseLayerPicker: false,
+        homeButton: false,
+        sceneModePicker: false
     });
     //viewer.extend(Cesium.viewerCesiumInspectorMixin);
 
@@ -172,28 +175,13 @@
                 },
                 "view": view
             }
-            let yaml = jsyaml.dump( json );
-//            navigator.clipboard.writeText(JSON.stringify(json));
-            navigator.clipboard.writeText( yaml );
+            navigator.clipboard.writeText( "---\n" + jsyaml.dump( json ) + "\n---" );
 
-            console.log(JSON.stringify(json));
+            //navigator.clipboard.writeText(JSON.stringify(json));
+            //console.log(JSON.stringify(json));
         }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-
-    title: new pin
-    pin:
-      latitude: 48.83104110783629
-      longitude: -123.76646333265627
-      height: 690.2674741671
-    view:
-      latitude: 48.830054000000004
-      longitude: -123.75814800000002
-      height: 1000.0000000000839
-      heading: 300
-      pitch: -45
-      roll: 359.99999999999994
-    
 
 </script>
 
