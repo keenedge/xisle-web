@@ -23,7 +23,7 @@
     {{ end }}
     <div class="relative flex flex-col grow">
         <div id="cesiumContainer" class="grow"></div>
-        <div id="htmlSummaryContainer" class="">
+        <div id="htmlSummaryContainer" style="display: none">
             This is a floating control panel<br />
             with a translucent background color.
             <p>
@@ -60,7 +60,8 @@
     const viewer = new Cesium.Viewer('cesiumContainer', {
         terrain: terrain,
         animation: false,
-        timeline: false
+        timeline: false,
+        infoBox: false
     });
     //viewer.extend(Cesium.viewerCesiumInspectorMixin);
 
@@ -96,23 +97,52 @@
     var position = new Cesium.Cartesian3.fromDegrees(view.longitude, view.latitude, view.height);
     var orientation = { heading: Cesium.Math.toRadians(view.heading), pitch: Cesium.Math.toRadians(view.pitch), roll: Cesium.Math.toRadians(view.roll) };
 
-    // viewer.dataSources.add(Cesium.GeoJsonDataSource.load('/pins/pins.json', {
-    //     stroke: Cesium.Color.HOTPINK,
-    //     fill: Cesium.Color.PINK,
-    //     strokeWidth: 3,
-    //     markerSymbol: '?'
-    // }));
+    viewer.dataSources.add(Cesium.GeoJsonDataSource.load('/pins.geojson', {
+        stroke: Cesium.Color.HOTPINK,
+        fill: Cesium.Color.PINK,
+        strokeWidth: 3,
+        markerSymbol: '?'
+    }));
 
     viewer.camera.setView({
         destination: position,
         orientation: orientation
     });
 
-
     var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+    viewer.selectedEntityChanged.addEventListener(function(selectedEntity) {
+        if (Cesium.defined(selectedEntity)) {
+            if (Cesium.defined(selectedEntity.properties)) {
+                if (Cesium.defined(selectedEntity.properties.link)) {
+                    var link = selectedEntity.properties.link.getValue() + "summary.txt ";
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            document.getElementById("htmlSummaryContainer").setHTMLUnsafe(this.responseText );
+                            document.getElementById("htmlSummaryContainer").style.display = "block";
+                            viewer.flyTo( selectedEntity);
+                        }
+                    };
+        
+                    xhttp.open("GET", link, true);
+                    xhttp.send();                    
+                }
+            } else {
+              console.log('Unknown entity selected.');
+              document.getElementById("htmlSummaryContainer").style.display = "none";
+            }
+        } else {
+          document.getElementById("htmlSummaryContainer").style.display = "none";
+          console.log('Deselected.');
+        }
+      });
+
     handler.setInputAction(function (event) {
+      
         var ray = viewer.camera.getPickRay(event.position);
         var mousePosition = viewer.scene.globe.pick(ray, viewer.scene);
+        
         if (Cesium.defined(mousePosition)) {
             var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
             var mouseLat = Cesium.Math.toDegrees(cartographic.latitude);
@@ -158,15 +188,7 @@
             //     });
 
 
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("htmlSummaryContainer").innerHTML = this.responseText;
-                }
-            };
-
-            xhttp.open("GET", "/pins/prevost-east-launch/summary.html", true);
-            xhttp.send();
+            
 
         }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);

@@ -1,0 +1,4 @@
+<div style="color:green" ><h1>{{ .Title }}</h1>
+summary: {{ .Summary }}
+<a href=" {{ .Permalink }}">More</a>
+</div>

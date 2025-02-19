@@ -1,0 +1,22 @@
+{{- $pages := (where .Site.RegularPages "Section" "pins") -}}
+{{- $pins := slice -}}
+
+{{- range $pages -}}
+    {{ $pins = $pins | append (dict 
+       "type" "Feature"
+       "geometry" ( dict 
+            "type" "Point"
+            "coordinates" (slice .Params.pin.longitude .Params.pin.latitude .Params.pin.height)
+        )
+        "properties" (dict
+            "title" .Title
+            "link" .Permalink
+        )
+    )
+    }}
+    
+ {{- end -}}
+ {
+    "type": "FeatureCollection",
+    "features": {{ $pins | jsonify }}
+ }

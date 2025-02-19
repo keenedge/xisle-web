@@ -3,7 +3,7 @@
 # https://blowfish.page/docs/getting-started/
 
 theme = "blowfish" # UNCOMMENT THIS LINE
-# baseURL = "https://your_domain.com/"
+baseURL = "https://xisle.net/"
 defaultContentLanguage = "en"
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
@@ -36,25 +36,23 @@ enableEmoji = true
   priority = 0.5
 
 [mediaTypes]
-  [mediaTypes.'text/summary']
-    suffixes = ['smy']
+  [mediaTypes.'application/geojson']
+    suffixes = ['geojson']
 
 [outputFormats]
-  [outputFormats.pins]
+  [outputFormats.geojson]
      baseName = 'pins'
      isPlainText = true
-     root = true
-     mediaType = 'application/json'
+     mediaType = 'application/geojson'
 
-  [outputFormats.summary]
+  [outputFormats.sum]
      baseName = 'summary'
      isPlainText = true
-     root = true
-     mediaType = 'text/html'
+     mediaType = 'text/plain'
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
-  page = ["HTML", "summary"]
+  home = ["HTML", "RSS", "JSON", "geojson"]
+  page = ["HTML", "sum", 'geojson']
 
 [related]
   threshold = 0
