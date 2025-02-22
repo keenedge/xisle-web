@@ -100,7 +100,7 @@
     var position = new Cesium.Cartesian3.fromDegrees(view.longitude, view.latitude, view.height);
     var orientation = { heading: Cesium.Math.toRadians(view.heading), pitch: Cesium.Math.toRadians(view.pitch), roll: Cesium.Math.toRadians(view.roll) };
 
-    viewer.dataSources.add(Cesium.GeoJsonDataSource.load('/pins.geojson', {
+    viewer.dataSources.add(Cesium.GeoJsonDataSource.load({{ .Site.BaseURL }}'/pins.geojson', {
         stroke: Cesium.Color.HOTPINK,
         fill: Cesium.Color.PINK,
         strokeWidth: 3,
